@@ -1,0 +1,10 @@
+---
+# label all PRs so that they may trigger on the labeled event
+labelmaker:
+  - changed-files:
+      - any-glob-to-any-file: '**'
+
+argocd:
+  - changed-files:
+      - any-glob-to-any-file:
+          - applications/**
