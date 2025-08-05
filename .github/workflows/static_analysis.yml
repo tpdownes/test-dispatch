@@ -2,29 +2,18 @@
 name: "Repository Static Analysis"
 
 on:
-  workflow_run:
-    workflows: [Pull Request Labeler]
-    types:
-      - completed
+  workflow_call:
+    inputs: {}
 
 permissions:
   contents: read
 
 jobs:
-  get-labels:
-    runs-on: ubuntu-latest
-    outputs:
-      labels: ${{ steps.labels.outputs.labels }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: labels
-        run: |
-          echo labels="$(gh pr view ${{ github.event.workflow_run.pull_requests[0].number }} --json labels --jq '[.labels.[].name]')" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ github.token }}
   validate:
-    if: ${{ contains(fromJSON(needs.get-labels.outputs.labels), 'argocd') }}
+    if: contains(github.event.pull_request.labels.*.name, 'argocd')
     needs: get-labels
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: |
+          git show
