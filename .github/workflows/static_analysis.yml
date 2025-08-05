@@ -1,5 +1,5 @@
 ---
-name: "Repository Static Analysis"
+name: "Static Analysis"
 
 on:
   workflow_call:
@@ -9,10 +9,10 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  kustomize:
     if: contains(github.event.pull_request.labels.*.name, 'argocd')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
-          git show
+          git show HEAD

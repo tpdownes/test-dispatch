@@ -1,7 +1,9 @@
-name: "Pull Request Labeler"
+name: "Required Checks"
 
 # this will fail if we ever allow PRs from forks
 # see: https://github.com/actions/labeler?tab=readme-ov-file#recommended-permissions
+# if forked, suggest to switch to "gh workflow run" here and workflow_dispatch in
+# files that are targhed by uses keyword
 on:
   - pull_request
 
@@ -12,6 +14,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: labels
         uses: actions/labeler@v5
         with:
