@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - id: labels
         run: |
-          echo labels="$(gh pr view ${{ github.event.workflow_run.pull_requests.number }} --json labels --jq '[.labels.[].name]')" >> $GITHUB_OUTPUT
+          echo labels="$(gh pr view ${{ github.event.workflow_run.pull_requests[0].number }} --json labels --jq '[.labels.[].name]')" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
   validate:
