@@ -18,7 +18,7 @@ jobs:
       - run: |
           gh workflow run "Repository Static Analysis" \
               --repo "$GITHUB_REPOSITORY" \
-              --ref ${{ github.head_ref }} \
+              --ref ${{ github.ref }} \
               -f pull_request_number="${{ github.event.number }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
