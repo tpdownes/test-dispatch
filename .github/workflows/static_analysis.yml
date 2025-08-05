@@ -9,10 +9,20 @@ permissions:
   contents: read
 
 jobs:
+  get-labels:
+    runs-on: ubuntu-latest
+    outputs:
+      labels: ${{ steps.labels.outputs.labels }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: labels
+        run: |
+          echo labels="$(gh pr view ${{ github.event.number || inputs.pull_request_number }} --json labels --jq '[.labels.[].name]')" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
   kustomize:
-    if: contains(github.event.pull_request.labels.*.name, 'argocd')
+    if: ${{ contains(fromJSON(needs.get-labels.outputs.labels), 'argocd') }}
+    needs: get-labels
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          git show HEAD
