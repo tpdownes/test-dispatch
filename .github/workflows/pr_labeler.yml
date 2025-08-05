@@ -6,7 +6,6 @@ on:
 jobs:
   labeler:
     permissions:
-      actions: write
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
@@ -15,10 +14,3 @@ jobs:
         uses: actions/labeler@v5
         with:
           sync-labels: true
-      - run: |
-          gh workflow run "Repository Static Analysis" \
-              --repo "$GITHUB_REPOSITORY" \
-              --ref ${{ github.head_ref }} \
-              -f pull_request_number="${{ github.event.number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
