@@ -28,3 +28,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           stat -t applications/test.yaml
+  tflint:
+    if: ${{ contains(fromJSON(needs.get-labels.outputs.labels), 'terraform') }}
+    needs: get-labels
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          stat -t applications/test.yaml
