@@ -1,24 +1,31 @@
-name: "Pull Request Labeler"
+name: "Required Checks"
 
+# this will fail if we ever allow PRs from forks because it will deny write
+# permission (for labels) on pull requests. See:
+#
+# https://github.com/actions/labeler?tab=readme-ov-file#recommended-permissions
+#
+# If we accept forks, likely make the following changes:
+# on: pull_request_target
+# run static-analysis via "gh workflow run --branch refs/pull/PULL_REQUEST_NUMBER/merge"
+# with permissions for "actions: write".
+#
+# Have seen difficuly associating the workflow_dispatch job with the pull request.
 on:
-  - pull_request_target
+  - pull_request
 
 jobs:
   labeler:
     permissions:
-      actions: write
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - id: labels
         uses: actions/labeler@v5
         with:
           sync-labels: true
-      - run: |
-          gh workflow run "Repository Static Analysis" \
-              --repo "$GITHUB_REPOSITORY" \
-              --ref ${{ github.ref }} \
-              -f pull_request_number="${{ github.event.number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  static-analysis:
+    needs: labeler
+    uses: ./.github/workflows/static_analysis.yml
