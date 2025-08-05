@@ -11,15 +11,20 @@ permissions:
   contents: read
 
 jobs:
-  print-event:
+  get-labels:
     runs-on: ubuntu-latest
+    outputs:
+      labels: ${{ steps.labels.outputs.labels }}
     steps:
-      - name: Dump GitHub context
+      - uses: actions/checkout@v4
+      - id: labels
+        run: |
+          echo labels="$(gh pr view ${{ github.event.workflow_run.pull_requests.number }} --json labels --jq '[.labels.[].name]')" >> $GITHUB_OUTPUT
         env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
+          GH_TOKEN: ${{ github.token }}
   validate:
-    if: contains(github.event.workflow_run.pull_requests[0].labels.*.name, 'argocd')
+    if: ${{ contains(fromJSON(needs.get-labels.outputs.labels), 'argocd') }}
+    needs: get-labels
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
