@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   validate:
-    if: contains(github.event.pull_request.labels.*.name, 'argocd')
+    if: contains(github.event.workflow_run.pull_requests.*.labels.*.name, 'argocd')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
